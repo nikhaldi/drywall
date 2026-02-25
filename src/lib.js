@@ -57,12 +57,14 @@ export function buildArgs(config, toolArgs) {
 }
 
 export function runJscpd(version, args) {
+  const fullArgs = [`jscpd@${version}`, ...args];
+  const cmd = ["npx", ...fullArgs];
   return new Promise((resolve, reject) => {
-    execFile("npx", [`jscpd@${version}`, ...args], (error, stdout, stderr) => {
+    execFile("npx", fullArgs, (error, stdout, stderr) => {
       if (error && !stderr.includes("Clone found")) {
         reject(new Error(stderr || error.message));
       } else {
-        resolve({ stdout, stderr });
+        resolve({ cmd, stdout, stderr });
       }
     });
   });

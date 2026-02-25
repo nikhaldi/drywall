@@ -70,7 +70,7 @@ server.registerTool(
       const targetPath = scanPath || config.path || ".";
       args.push(targetPath);
 
-      await runJscpd(version, args);
+      const { cmd } = await runJscpd(version, args);
       const raw = await readFile(REPORT_PATH, "utf8");
       const result = await parseReport(raw, {
         maxDuplicates: maxDuplicates ?? config.maxDuplicates,
@@ -81,7 +81,11 @@ server.registerTool(
         content: [
           {
             type: "text",
-            text: JSON.stringify({ status: "ok", ...result }, null, 2),
+            text: JSON.stringify(
+              { status: "ok", command: cmd.join(" "), cwd: process.cwd(), ...result },
+              null,
+              2,
+            ),
           },
         ],
       };
