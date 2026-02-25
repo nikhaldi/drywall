@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const VERSION = "0.2.0";
+export const VERSION = "0.2.1";
 export const DEFAULT_VERSION = "4.0.8";
 export const REPORT_DIR = "/tmp/drywall-report";
 export const REPORT_PATH = join(REPORT_DIR, "jscpd-report.json");
