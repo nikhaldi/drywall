@@ -1,0 +1,16 @@
+{
+  "name": "drywall",
+  "owner": {
+    "name": "Nik Haldimann"
+  },
+  "metadata": {
+    "description": "Singular marketplace for DRYwall, which detects and eliminates code duplication using jscpd"
+  },
+  "plugins": [
+    {
+      "name": "drywall",
+      "source": "./",
+      "description": "Keep it DRY - detect and eliminate code duplication using jscpd. Includes skills and a subagent to aid deduplication and automatically refactor duplicated code."
+    }
+  ]
+}

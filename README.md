@@ -12,10 +12,11 @@ Because DRYwall detects code duplication using a deterministic toolchain (the aw
 
 Prerequisite: [Node.js](https://nodejs.org/) must be installed on your system (with `node` and `npx` binaries available to Claude Code).
 
-Open Claude Code and install the plugin (TODO this needs distribution information):
+Open Claude Code and add the marketplace, then install the plugin:
 
 ```
-/plugin install drywall
+/plugin marketplace add nikhaldi/drywall
+/plugin install drywall@drywall
 ```
 
 To start refactoring duplicated code with manual supervision, run the scan skill within Claude Code:
