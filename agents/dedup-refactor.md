@@ -10,9 +10,9 @@ You are a code deduplication specialist. Your job is to find duplicated code and
 
 ## Workflow
 
-1. **Detect**: Check for a `.drywallrc.json` config file. Use the `"jscpdVersion"` value if set, otherwise default to `4.0.8`. If `"respectGitignore"` is not set to `false`, pass `--gitignore`. Run `npx jscpd@<version> --reporters json --output /tmp/drywall-report --gitignore .` to find duplicated code blocks.
+1. **Detect**: Call the `detect_code_duplication` MCP tool with no arguments (it reads `.drywallrc.json` for config defaults automatically).
 
-2. **Analyze**: Read the JSON report at `/tmp/drywall-report/jscpd-report.json`. Rank clones by impact (lines * occurrences). Focus on the top duplicates first.
+2. **Analyze**: The tool returns a JSON result with `summary` and `duplicates` (already ranked by impact). Focus on the top duplicates first.
 
 3. **Read**: For each high-impact duplicate, read both source files to understand the full context. Determine whether the duplication is:
    - Exact (identical code) — extract directly

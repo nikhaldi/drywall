@@ -1,5 +1,5 @@
 {
-  "minTokens": 30,
+  "minTokens": 20,
   "minLines": 5,
   "ignore": []
 }
