@@ -51,6 +51,7 @@ An autonomous agent that detects duplication and refactors it end-to-end — ext
 Automatically invoked by Claude Code when your task involves refactoring or deduplication. Runs [jscpd](https://jscpd.dev/) under the hood and returns structured results.
 
 Parameters:
+
 - `path` — directory to scan (default: `.`)
 - `options` — object of [jscpd options](https://jscpd.dev/getting-started/configuration#cli-options) passed as CLI flags (e.g., `{"minTokens": 30, "minLines": 5, "ignore": ["**/test/**"]}`)
 

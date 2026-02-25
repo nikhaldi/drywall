@@ -18,7 +18,10 @@ function startServer() {
 
   function onResponse() {
     return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error("Timeout waiting for response")), 5000);
+      const timeout = setTimeout(
+        () => reject(new Error("Timeout waiting for response")),
+        5000,
+      );
       function onData(chunk) {
         buffer += chunk.toString();
         const lines = buffer.split("\n");
@@ -87,7 +90,10 @@ describe("MCP server", () => {
 
     const listResult = await server.onResponse();
     assert.equal(listResult.id, 2);
-    assert.ok(!listResult.error, `tools/list returned error: ${JSON.stringify(listResult.error)}`);
+    assert.ok(
+      !listResult.error,
+      `tools/list returned error: ${JSON.stringify(listResult.error)}`,
+    );
 
     const tools = listResult.result.tools;
     assert.equal(tools.length, 1);

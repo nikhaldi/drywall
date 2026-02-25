@@ -56,7 +56,7 @@ describe("buildArgs", () => {
     const args = buildArgs({}, { ignore: ["**/test/**", "**/vendor/**"] });
     const indices = args.reduce(
       (acc, v, i) => (v === "--ignore" ? [...acc, i] : acc),
-      []
+      [],
     );
     assert.equal(indices.length, 2);
     assert.equal(args[indices[0] + 1], "**/test/**");
@@ -76,7 +76,7 @@ describe("buildArgs", () => {
   it("skips DRYwall-specific keys", () => {
     const args = buildArgs(
       { jscpdVersion: "5.0.0", respectGitignore: true, path: "src/" },
-      {}
+      {},
     );
     assert.ok(!args.includes("--jscpd-version"));
     assert.ok(!args.includes("--respect-gitignore"));
@@ -99,13 +99,25 @@ describe("parseReport", () => {
     duplicates: [
       {
         firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
-        secondFile: { name: "b.js", startLoc: { line: 10 }, endLoc: { line: 14 } },
+        secondFile: {
+          name: "b.js",
+          startLoc: { line: 10 },
+          endLoc: { line: 14 },
+        },
         lines: 5,
         fragment: "const x = 1;",
       },
       {
-        firstFile: { name: "c.js", startLoc: { line: 1 }, endLoc: { line: 20 } },
-        secondFile: { name: "d.js", startLoc: { line: 1 }, endLoc: { line: 20 } },
+        firstFile: {
+          name: "c.js",
+          startLoc: { line: 1 },
+          endLoc: { line: 20 },
+        },
+        secondFile: {
+          name: "d.js",
+          startLoc: { line: 1 },
+          endLoc: { line: 20 },
+        },
         lines: 20,
         fragment: "function big() {}",
       },
@@ -149,7 +161,7 @@ describe("parseReport", () => {
 
   it("handles empty report", async () => {
     const result = await parseReport(
-      JSON.stringify({ duplicates: [], statistics: {} })
+      JSON.stringify({ duplicates: [], statistics: {} }),
     );
     assert.deepEqual(result.summary, {
       clones: 0,

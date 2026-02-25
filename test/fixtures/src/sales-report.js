@@ -5,11 +5,11 @@ export function generateSalesReport(sales) {
   const average = sales.length > 0 ? total / sales.length : 0;
   const maxSale = sales.reduce(
     (max, s) => (s.revenue > max.revenue ? s : max),
-    sales[0]
+    sales[0],
   );
   const minSale = sales.reduce(
     (min, s) => (s.revenue < min.revenue ? s : min),
-    sales[0]
+    sales[0],
   );
 
   return {

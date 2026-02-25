@@ -6,7 +6,11 @@ export const VERSION = "0.1.0";
 export const DEFAULT_VERSION = "4.0.8";
 export const REPORT_DIR = "/tmp/drywall-report";
 export const REPORT_PATH = join(REPORT_DIR, "jscpd-report.json");
-export const DRYWALL_KEYS = new Set(["jscpdVersion", "respectGitignore", "path"]);
+export const DRYWALL_KEYS = new Set([
+  "jscpdVersion",
+  "respectGitignore",
+  "path",
+]);
 
 export function camelToKebab(str) {
   return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();

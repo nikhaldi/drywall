@@ -37,8 +37,8 @@ server.registerTool(
         .looseObject({})
         .describe(
           "jscpd options passed as CLI flags. Keys are camelCase and converted to --kebab-case flags. " +
-          'Examples: {"minTokens": 30, "minLines": 5, "ignore": ["**/test/**"], "format": ["javascript", "typescript"], "threshold": 10}. ' +
-          "See https://jscpd.dev/getting-started/configuration#cli-options for all options."
+            'Examples: {"minTokens": 30, "minLines": 5, "ignore": ["**/test/**"], "format": ["javascript", "typescript"], "threshold": 10}. ' +
+            "See https://jscpd.dev/getting-started/configuration#cli-options for all options.",
         )
         .optional(),
     }),
@@ -74,14 +74,14 @@ server.registerTool(
             text: JSON.stringify(
               { status: "error", message: err.message },
               null,
-              2
+              2,
             ),
           },
         ],
         isError: true,
       };
     }
-  }
+  },
 );
 
 async function main() {

@@ -5,11 +5,11 @@ export function generateOrderReport(orders) {
   const average = orders.length > 0 ? total / orders.length : 0;
   const maxOrder = orders.reduce(
     (max, o) => (o.amount > max.amount ? o : max),
-    orders[0]
+    orders[0],
   );
   const minOrder = orders.reduce(
     (min, o) => (o.amount < min.amount ? o : min),
-    orders[0]
+    orders[0],
   );
 
   return {

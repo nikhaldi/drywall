@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/detect-duplication.js --bundle --platform=node --format=esm --outfile=servers/detect-duplication.js --banner:js='#!/usr/bin/env node' --minify --tree-shaking=true",
-    "test": "node --test 'test/**/*.test.js'"
+    "test": "node --test 'test/**/*.test.js'",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "zod": "^4.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "prettier": "^3.8.1"
   }
 }
