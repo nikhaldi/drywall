@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.2.0";
 export const DEFAULT_VERSION = "4.0.8";
 export const REPORT_DIR = "/tmp/drywall-report";
 export const REPORT_PATH = join(REPORT_DIR, "jscpd-report.json");
@@ -71,7 +71,10 @@ export function runJscpd(version, args) {
 export const DEFAULT_MAX_DUPLICATES = 20;
 export const DEFAULT_MAX_FRAGMENT_LENGTH = 500;
 
-export async function parseReport(raw, { maxDuplicates, maxFragmentLength } = {}) {
+export async function parseReport(
+  raw,
+  { maxDuplicates, maxFragmentLength } = {},
+) {
   const limit = maxDuplicates ?? DEFAULT_MAX_DUPLICATES;
   const fragLimit = maxFragmentLength ?? DEFAULT_MAX_FRAGMENT_LENGTH;
   const report = JSON.parse(raw);
