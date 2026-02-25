@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Detect and eliminate code duplication using jscpd",
   "mcpServers": {
-    "detect-duplication": {
-      "command": "${CLAUDE_PLUGIN_ROOT}/servers/detect-duplication.js"
+    "jscpd": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/jscpd.js"
     }
   }
 }

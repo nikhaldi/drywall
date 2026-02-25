@@ -1,2 +1,2 @@
-servers/detect-duplication.js
+servers/jscpd.js
 **/*.json

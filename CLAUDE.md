@@ -10,7 +10,7 @@ DRYwall is a Claude Code plugin for detecting and eliminating code duplication. 
 
 The plugin has three components that work together:
 
-- **MCP Server** (source: `src/detect-duplication.js`, built: `servers/detect-duplication.js`) — A Node.js MCP server providing the `detect_code_duplication` tool. Reads `.drywallrc.json`, runs jscpd, and returns structured results ranked by impact. The skill and agent both use this tool for detection. Bundled via esbuild for distribution (no `node_modules` needed at runtime).
+- **MCP Server** (source: `src/jscpd.js`, built: `servers/jscpd.js`) — A Node.js MCP server providing the `detect_code_duplication` tool. Reads `.drywallrc.json`, runs jscpd, and returns structured results ranked by impact. The skill and agent both use this tool for detection. Bundled via esbuild for distribution (no `node_modules` needed at runtime).
 
 - **Skill** (`skills/scan/SKILL.md`) — User-invocable command `/drywall:scan` that calls the MCP tool and presents the top 10 duplicates with consolidation suggestions.
 
@@ -23,8 +23,8 @@ Projects using DRYwall configure via `.drywallrc.json` at project root. Keys `js
 ## Development
 
 - `npm install` — install dependencies
-- `npm run build` — bundle `src/detect-duplication.js` to `servers/detect-duplication.js`
-- The bundle must be rebuilt and committed after changes to `src/detect-duplication.js`
+- `npm run build` — bundle `src/jscpd.js` to `servers/jscpd.js`
+- The bundle must be rebuilt and committed after changes to `src/jscpd.js`
 - `npm test` — run unit tests (Node.js built-in test runner)
 - Tests live in `test/**/*.test.js` and cover `src/lib.js` (helpers extracted for testability)
 - `test/fixtures/` contains a sample codebase with intentional duplication for manual testing

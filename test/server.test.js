@@ -6,7 +6,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SERVER = join(ROOT, "servers", "detect-duplication.js");
+const SERVER = join(ROOT, "servers", "jscpd.js");
 
 function startServer() {
   const proc = spawn("node", [SERVER], { stdio: ["pipe", "pipe", "pipe"] });
