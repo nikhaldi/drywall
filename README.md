@@ -52,6 +52,19 @@ The configuration options specific to DRYwall are:
 - **`maxDuplicates`** — Maximum number of duplicate pairs to return, ranked by impact. Defaults to `20`. (This needs to be restricted to avoid blowing past context limits right away in large codebases.)
 - **`maxFragmentLength`** — Maximum character length of each code fragment before truncation. Defaults to `500`.
 
+### Ignored code blocks
+
+If you want to exclude some code from all of DRYwall's refactoring, you can use `jscpd:ignore-start` and `jscpd:ignore-end` [markers](https://github.com/kucherenko/jscpd/blob/master/apps/jscpd/README.md#ignored-blocks) in the code. JavaScript example:
+
+```
+/* jscpd:ignore-start */
+import lodash from 'lodash';
+import React from 'react';
+import {User} from './models';
+import {UserService} from './services';
+/* jscpd:ignore-end */
+```
+
 ## Components
 
 ### Skill: `/drywall:scan`
