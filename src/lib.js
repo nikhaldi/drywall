@@ -10,6 +10,8 @@ export const DRYWALL_KEYS = new Set([
   "jscpdVersion",
   "respectGitignore",
   "path",
+  "maxDuplicates",
+  "maxFragmentLength",
 ]);
 
 export function camelToKebab(str) {
@@ -66,7 +68,12 @@ export function runJscpd(version, args) {
   });
 }
 
-export async function parseReport(raw) {
+export const DEFAULT_MAX_DUPLICATES = 20;
+export const DEFAULT_MAX_FRAGMENT_LENGTH = 500;
+
+export async function parseReport(raw, { maxDuplicates, maxFragmentLength } = {}) {
+  const limit = maxDuplicates ?? DEFAULT_MAX_DUPLICATES;
+  const fragLimit = maxFragmentLength ?? DEFAULT_MAX_FRAGMENT_LENGTH;
   const report = JSON.parse(raw);
 
   const duplicates = (report.duplicates || [])
@@ -78,9 +85,13 @@ export async function parseReport(raw) {
       secondStart: d.secondFile.startLoc.line,
       secondEnd: d.secondFile.endLoc.line,
       lines: d.lines,
-      fragment: d.fragment,
+      fragment:
+        d.fragment && d.fragment.length > fragLimit
+          ? d.fragment.slice(0, fragLimit) + "\n[...truncated]"
+          : d.fragment,
     }))
-    .sort((a, b) => b.lines - a.lines);
+    .sort((a, b) => b.lines - a.lines)
+    .slice(0, limit);
 
   const total = report.statistics?.total || {};
 

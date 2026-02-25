@@ -6,6 +6,8 @@ import {
   parseReport,
   REPORT_DIR,
   DRYWALL_KEYS,
+  DEFAULT_MAX_DUPLICATES,
+  DEFAULT_MAX_FRAGMENT_LENGTH,
 } from "../src/lib.js";
 
 describe("camelToKebab", () => {
@@ -176,5 +178,83 @@ describe("parseReport", () => {
     const result = await parseReport(JSON.stringify({}));
     assert.equal(result.duplicates.length, 0);
     assert.equal(result.summary.clones, 0);
+  });
+
+  it("truncates long fragments", async () => {
+    const longFragment = "x".repeat(DEFAULT_MAX_FRAGMENT_LENGTH + 100);
+    const report = JSON.stringify({
+      duplicates: [
+        {
+          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          lines: 5,
+          fragment: longFragment,
+        },
+      ],
+      statistics: {},
+    });
+    const result = await parseReport(report);
+    assert.ok(result.duplicates[0].fragment.length < longFragment.length);
+    assert.ok(result.duplicates[0].fragment.endsWith("[...truncated]"));
+  });
+
+  it("does not truncate short fragments", async () => {
+    const shortFragment = "const x = 1;";
+    const report = JSON.stringify({
+      duplicates: [
+        {
+          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 2 } },
+          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 2 } },
+          lines: 2,
+          fragment: shortFragment,
+        },
+      ],
+      statistics: {},
+    });
+    const result = await parseReport(report);
+    assert.equal(result.duplicates[0].fragment, shortFragment);
+  });
+
+  it("limits to DEFAULT_MAX_DUPLICATES results", async () => {
+    const duplicates = Array.from({ length: DEFAULT_MAX_DUPLICATES + 10 }, (_, i) => ({
+      firstFile: { name: "a.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
+      secondFile: { name: "b.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
+      lines: i + 1,
+      fragment: "x",
+    }));
+    const report = JSON.stringify({ duplicates, statistics: {} });
+    const result = await parseReport(report);
+    assert.equal(result.duplicates.length, DEFAULT_MAX_DUPLICATES);
+    // should keep the highest-impact ones (sorted by lines desc)
+    assert.equal(result.duplicates[0].lines, DEFAULT_MAX_DUPLICATES + 10);
+  });
+
+  it("respects custom maxDuplicates", async () => {
+    const duplicates = Array.from({ length: 10 }, (_, i) => ({
+      firstFile: { name: "a.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
+      secondFile: { name: "b.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
+      lines: i + 1,
+      fragment: "x",
+    }));
+    const report = JSON.stringify({ duplicates, statistics: {} });
+    const result = await parseReport(report, { maxDuplicates: 3 });
+    assert.equal(result.duplicates.length, 3);
+  });
+
+  it("respects custom maxFragmentLength", async () => {
+    const report = JSON.stringify({
+      duplicates: [
+        {
+          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          lines: 5,
+          fragment: "x".repeat(200),
+        },
+      ],
+      statistics: {},
+    });
+    const result = await parseReport(report, { maxFragmentLength: 50 });
+    assert.ok(result.duplicates[0].fragment.endsWith("[...truncated]"));
+    assert.ok(result.duplicates[0].fragment.length < 200);
   });
 });

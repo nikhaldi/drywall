@@ -49,6 +49,8 @@ The configuration options specific to DRYwall are:
 
 - **`respectGitignore`** — `true` by default. Passes `--gitignore` to jscpd so that files excluded by `.gitignore` are automatically skipped. Set to `false` to disable.
 - **`jscpdVersion`** — Pin the jscpd version used via `npx`. Defaults to `4.0.8` if not set.
+- **`maxDuplicates`** — Maximum number of duplicate pairs to return, ranked by impact. Defaults to `20`. (This needs to be restricted to avoid blowing past context limits right away in large codebases.)
+- **`maxFragmentLength`** — Maximum character length of each code fragment before truncation. Defaults to `500`.
 
 ## Components
 

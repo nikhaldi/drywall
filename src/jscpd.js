@@ -12,6 +12,8 @@ import { z } from "zod";
 import {
   VERSION,
   DEFAULT_VERSION,
+  DEFAULT_MAX_DUPLICATES,
+  DEFAULT_MAX_FRAGMENT_LENGTH,
   REPORT_PATH,
   buildArgs,
   readConfig,
@@ -41,9 +43,23 @@ server.registerTool(
             "See https://jscpd.dev/getting-started/configuration#cli-options for all options.",
         )
         .optional(),
+      maxDuplicates: z
+        .number()
+        .int()
+        .describe(
+          `Maximum number of duplicate pairs to return, ranked by impact. Defaults to ${DEFAULT_MAX_DUPLICATES}.`,
+        )
+        .optional(),
+      maxFragmentLength: z
+        .number()
+        .int()
+        .describe(
+          `Maximum character length of each code fragment before truncation. Defaults to ${DEFAULT_MAX_FRAGMENT_LENGTH}.`,
+        )
+        .optional(),
     }),
   },
-  async ({ path: scanPath, options = {} }) => {
+  async ({ path: scanPath, options = {}, maxDuplicates, maxFragmentLength }) => {
     try {
       const config = await readConfig();
       const version = config.jscpdVersion || DEFAULT_VERSION;
@@ -56,7 +72,10 @@ server.registerTool(
 
       await runJscpd(version, args);
       const raw = await readFile(REPORT_PATH, "utf8");
-      const result = await parseReport(raw);
+      const result = await parseReport(raw, {
+        maxDuplicates: maxDuplicates ?? config.maxDuplicates,
+        maxFragmentLength: maxFragmentLength ?? config.maxFragmentLength,
+      });
 
       return {
         content: [
