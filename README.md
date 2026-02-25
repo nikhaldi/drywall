@@ -2,17 +2,37 @@
 
 A Claude Code plugin for detecting and eliminating code duplication using [jscpd](https://jscpd.dev/).
 
-## Installation
+DRY = Don't Repeat Yourself
+
+This was motivated by the observation that coding agents, including Claude Code, have a bias towards producing new code over reusing existing code or extracting common code. The resulting creeping code duplication weighs down AI-native codebases. This is a tool to make ongoing deduplication quick and easy from within Claude Code.
+
+Because DRYwall detects code duplication using a deterministic toolchain (the awesome jscpd), this plugin is significantly more effective and cheaper in tokens than just telling an agent to find and refactor duplication.
+
+## Installation & Quickstart
 
 Prerequisite: [Node.js](https://nodejs.org/) must be installed on your system (with `node` and `npx` binaries available to Claude Code).
+
+Open Claude Code and install the plugin (TODO this needs distribution information):
 
 ```
 /plugin install drywall
 ```
 
+To start refactoring duplicated code with manual supervision, run the scan skill within Claude Code:
+
+```
+/drywall:scan
+```
+
+If you just want Claude Code to take care of everything, prompt it with something like this after installing the plugin (it will launch a dedicated subagent):
+
+```
+Deduplicate code in this codebase
+```
+
 ## Configuration
 
-Create a `.drywallrc.json` in your project root to set defaults. Values correspond to [jscpd CLI options](https://jscpd.dev/getting-started/configuration#cli-options):
+Create a `.drywallrc.json` in your project root to set defaults. Values correspond to [jscpd CLI options](https://jscpd.dev/getting-started/configuration#cli-options), except for the DRYwall-specific ones listed below:
 
 ```json
 {
@@ -23,6 +43,8 @@ Create a `.drywallrc.json` in your project root to set defaults. Values correspo
   "jscpdVersion": "4.0.8"
 }
 ```
+
+The configuration options specific to DRYwall are:
 
 - **`respectGitignore`** — `true` by default. Passes `--gitignore` to jscpd so that files excluded by `.gitignore` are automatically skipped. Set to `false` to disable.
 - **`jscpdVersion`** — Pin the jscpd version used via `npx`. Defaults to `4.0.8` if not set.
@@ -40,7 +62,7 @@ Invoke within a Claude Code session with:
 /drywall:scan --min-tokens=100 --min-lines=10
 ```
 
-Arguments are passed through as is to [jscpd](https://jscpd.dev/getting-started/configuration#cli-options). These arguments are additive (or override) defaults configured in `.drywallrc.json` (see Configuration below).
+Arguments are passed through as is to [jscpd](https://jscpd.dev/getting-started/configuration#cli-options). These arguments are additive (or override) defaults configured in `.drywallrc.json` (see Configuration above).
 
 ### Agent: `dedup-refactor`
 
