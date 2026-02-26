@@ -91,7 +91,9 @@ Automatically invoked by Claude Code when your task involves refactoring or dedu
 Parameters:
 
 - `path` — directory to scan (default: `.`)
-- `options` — object of [jscpd options](https://jscpd.dev/getting-started/configuration#cli-options) passed as CLI flags (e.g., `{"minTokens": 30, "minLines": 5, "ignore": ["**/test/**"]}`)
+- `options` — object of [jscpd options](https://jscpd.dev/getting-started/configuration#cli-options) passed as CLI flags. Keys are camelCase and converted to `--kebab-case` flags (e.g., `{"minTokens": 30, "minLines": 5, "ignore": ["**/test/**"], "format": ["javascript", "typescript"], "threshold": 10}`)
+- `maxDuplicates` — maximum number of duplicate pairs to return, ranked by impact (default: `20`)
+- `maxFragmentLength` — maximum character length of each code fragment before truncation (default: `500`)
 
 ## License
 
