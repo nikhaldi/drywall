@@ -6,7 +6,7 @@ DRY = Don't Repeat Yourself
 
 This was motivated by the observation that coding agents, including Claude Code, have a bias towards producing new code over reusing existing code or extracting common code. The resulting creeping code duplication weighs down AI-native codebases. This is a tool to make ongoing deduplication quick and easy from within Claude Code.
 
-Because DRYwall detects code duplication using a deterministic toolchain (the awesome jscpd), this plugin is significantly more effective and cheaper in tokens than just telling an agent to find and refactor duplication.
+Because DRYwall detects code duplication using a deterministic toolchain (the awesome jscpd), this plugin is significantly more effective and cheaper in tokens than just telling an agent to find and refactor duplication. [This blog post](https://ngof.nikhaldimann.com/p/4-ways-to-combat-claudes-code-duplication) provides some background.
 
 ## Installation & Quickstart
 
