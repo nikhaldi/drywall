@@ -23,8 +23,12 @@ Projects using DRYwall configure via `.drywallrc.json` at project root. Keys `js
 ## Development
 
 - `npm install` — install dependencies
-- `npm run build` — bundle `src/jscpd.js` to `servers/jscpd.js`
-- The bundle must be rebuilt and committed after changes to `src/jscpd.js`
+- `npm run build` — bundle `src/jscpd.js` (and its dependency `src/lib.js`) to `servers/jscpd.js` via `build.js`
+- The bundle must be rebuilt and committed after changes to `src/jscpd.js` or `src/lib.js`
 - `npm test` — run unit tests (Node.js built-in test runner)
 - Tests live in `test/**/*.test.js` and cover `src/lib.js` (helpers extracted for testability)
 - `test/fixtures/` contains a sample codebase with intentional duplication for manual testing
+
+## Version
+
+The version is defined in `package.json` and injected into the bundle at build time via esbuild's `define`. It must also be kept in sync in `.claude-plugin/plugin.json` — CI verifies this.

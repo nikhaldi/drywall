@@ -95,6 +95,20 @@ Parameters:
 - `maxDuplicates` — maximum number of duplicate pairs to return, ranked by impact (default: `20`)
 - `maxFragmentLength` — maximum character length of each code fragment before truncation (default: `500`)
 
+## Development
+
+```
+npm install
+npm test
+npm run build
+```
+
+To test the plugin locally in Claude Code:
+
+```
+claude --plugin-dir /path/to/drywall
+```
+
 ## License
 
 This project is licensed under the [MIT License](./LICENSE.txt).
