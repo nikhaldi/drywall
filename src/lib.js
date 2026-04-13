@@ -56,7 +56,12 @@ export function buildArgs(config, toolArgs) {
   return args;
 }
 
+const VERSION_RE = /^\d+\.\d+\.\d+(-[\w.]+)?$/;
+
 export function runJscpd(version, args) {
+  if (!VERSION_RE.test(version)) {
+    throw new Error(`Invalid jscpd version: "${version}"`);
+  }
   const fullArgs = [`jscpd@${version}`, ...args];
   const cmd = ["npx", ...fullArgs];
   return new Promise((resolve, reject) => {

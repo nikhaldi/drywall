@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   camelToKebab,
   buildArgs,
+  runJscpd,
   parseReport,
   REPORT_DIR,
   DRYWALL_KEYS,
@@ -299,5 +300,19 @@ describe("parseReport", () => {
     const result = await parseReport(report, { maxFragmentLength: 50 });
     assert.ok(result.duplicates[0].fragment.endsWith("[...truncated]"));
     assert.ok(result.duplicates[0].fragment.length < 200);
+  });
+});
+
+describe("runJscpd", () => {
+  it("rejects invalid version strings", () => {
+    assert.throws(
+      () => runJscpd("../../malicious-pkg", []),
+      /Invalid jscpd version/,
+    );
+    assert.throws(() => runJscpd("jscpd@evil", []), /Invalid jscpd version/);
+    assert.throws(
+      () => runJscpd("1.0.0; rm -rf /", []),
+      /Invalid jscpd version/,
+    );
   });
 });
