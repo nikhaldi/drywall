@@ -59,7 +59,12 @@ server.registerTool(
         .optional(),
     }),
   },
-  async ({ path: scanPath, options = {}, maxDuplicates, maxFragmentLength }) => {
+  async ({
+    path: scanPath,
+    options = {},
+    maxDuplicates,
+    maxFragmentLength,
+  }) => {
     try {
       const config = await readConfig();
       const version = config.jscpdVersion || DEFAULT_VERSION;
@@ -82,7 +87,12 @@ server.registerTool(
           {
             type: "text",
             text: JSON.stringify(
-              { status: "ok", command: cmd.join(" "), cwd: process.cwd(), ...result },
+              {
+                status: "ok",
+                command: cmd.join(" "),
+                cwd: process.cwd(),
+                ...result,
+              },
               null,
               2,
             ),

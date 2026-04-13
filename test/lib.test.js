@@ -185,8 +185,16 @@ describe("parseReport", () => {
     const report = JSON.stringify({
       duplicates: [
         {
-          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
-          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          firstFile: {
+            name: "a.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 5 },
+          },
+          secondFile: {
+            name: "b.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 5 },
+          },
           lines: 5,
           fragment: longFragment,
         },
@@ -203,8 +211,16 @@ describe("parseReport", () => {
     const report = JSON.stringify({
       duplicates: [
         {
-          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 2 } },
-          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 2 } },
+          firstFile: {
+            name: "a.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 2 },
+          },
+          secondFile: {
+            name: "b.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 2 },
+          },
           lines: 2,
           fragment: shortFragment,
         },
@@ -216,12 +232,23 @@ describe("parseReport", () => {
   });
 
   it("limits to DEFAULT_MAX_DUPLICATES results", async () => {
-    const duplicates = Array.from({ length: DEFAULT_MAX_DUPLICATES + 10 }, (_, i) => ({
-      firstFile: { name: "a.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
-      secondFile: { name: "b.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
-      lines: i + 1,
-      fragment: "x",
-    }));
+    const duplicates = Array.from(
+      { length: DEFAULT_MAX_DUPLICATES + 10 },
+      (_, i) => ({
+        firstFile: {
+          name: "a.js",
+          startLoc: { line: i },
+          endLoc: { line: i + 1 },
+        },
+        secondFile: {
+          name: "b.js",
+          startLoc: { line: i },
+          endLoc: { line: i + 1 },
+        },
+        lines: i + 1,
+        fragment: "x",
+      }),
+    );
     const report = JSON.stringify({ duplicates, statistics: {} });
     const result = await parseReport(report);
     assert.equal(result.duplicates.length, DEFAULT_MAX_DUPLICATES);
@@ -231,8 +258,16 @@ describe("parseReport", () => {
 
   it("respects custom maxDuplicates", async () => {
     const duplicates = Array.from({ length: 10 }, (_, i) => ({
-      firstFile: { name: "a.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
-      secondFile: { name: "b.js", startLoc: { line: i }, endLoc: { line: i + 1 } },
+      firstFile: {
+        name: "a.js",
+        startLoc: { line: i },
+        endLoc: { line: i + 1 },
+      },
+      secondFile: {
+        name: "b.js",
+        startLoc: { line: i },
+        endLoc: { line: i + 1 },
+      },
       lines: i + 1,
       fragment: "x",
     }));
@@ -245,8 +280,16 @@ describe("parseReport", () => {
     const report = JSON.stringify({
       duplicates: [
         {
-          firstFile: { name: "a.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
-          secondFile: { name: "b.js", startLoc: { line: 1 }, endLoc: { line: 5 } },
+          firstFile: {
+            name: "a.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 5 },
+          },
+          secondFile: {
+            name: "b.js",
+            startLoc: { line: 1 },
+            endLoc: { line: 5 },
+          },
           lines: 5,
           fragment: "x".repeat(200),
         },
