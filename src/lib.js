@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const VERSION = DRYWALL_VERSION;
-export const DEFAULT_VERSION = "4.0.8";
+export const DEFAULT_VERSION = "4.0.9";
 export const REPORT_DIR = "/tmp/drywall-report";
 export const REPORT_PATH = join(REPORT_DIR, "jscpd-report.json");
 export const DRYWALL_KEYS = new Set([
