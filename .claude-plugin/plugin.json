@@ -1,6 +1,6 @@
 {
   "name": "drywall",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Detect and eliminate code duplication using jscpd",
   "mcpServers": {
     "jscpd": {
