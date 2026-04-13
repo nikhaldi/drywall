@@ -20,7 +20,7 @@ cd test/fixtures
 # then invoke /drywall:scan in a Claude Code session
 
 # Or run jscpd directly
-npx jscpd@4.0.8 --reporters json --output /tmp/drywall-report --min-tokens 30 --min-lines 5 src/
+npx jscpd@4.0.9 --reporters json --output /tmp/drywall-report --min-tokens 30 --min-lines 5 src/
 cat /tmp/drywall-report/jscpd-report.json
 
 # Test the agent
