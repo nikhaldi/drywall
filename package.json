@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/jscpd.js --bundle --platform=node --format=esm --outfile=servers/jscpd.js --banner:js='#!/usr/bin/env node' --minify --tree-shaking=true",
-    "test": "node --test 'test/**/*.test.js'",
+    "build": "node build.js",
+    "test": "node --import ./test/setup.js --test 'test/**/*.test.js'",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
