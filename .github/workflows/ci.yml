@@ -20,3 +20,11 @@ jobs:
       - run: npm run build
       - name: Check build is up-to-date
         run: git diff --exit-code servers/jscpd.js
+      - name: Check versions match
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          PLUGIN=$(node -p "require('./.claude-plugin/plugin.json').version")
+          if [ "$PKG" != "$PLUGIN" ]; then
+            echo "::error::Version mismatch: package.json=$PKG, plugin.json=$PLUGIN"
+            exit 1
+          fi
