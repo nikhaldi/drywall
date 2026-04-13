@@ -1,11 +1,15 @@
 import { execFile } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdtemp } from "node:fs/promises";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 
 export const VERSION = DRYWALL_VERSION;
 export const DEFAULT_VERSION = "4.0.9";
-export const REPORT_DIR = "/tmp/drywall-report";
-export const REPORT_PATH = join(REPORT_DIR, "jscpd-report.json");
+
+export async function createReportDir() {
+  const dir = await mkdtemp(join(tmpdir(), "drywall-report-"));
+  return { reportDir: dir, reportPath: join(dir, "jscpd-report.json") };
+}
 export const DRYWALL_KEYS = new Set([
   "jscpdVersion",
   "respectGitignore",
@@ -27,7 +31,7 @@ export async function readConfig() {
   }
 }
 
-export function buildArgs(config, toolArgs) {
+export function buildArgs(config, toolArgs, reportDir) {
   const { jscpdVersion, respectGitignore, ...jscpdConfig } = config;
   const merged = { ...jscpdConfig, ...toolArgs };
   const args = [];
@@ -52,7 +56,7 @@ export function buildArgs(config, toolArgs) {
     }
   }
 
-  args.push("--reporters", "json", "--output", REPORT_DIR);
+  args.push("--reporters", "json", "--output", reportDir);
   return args;
 }
 

@@ -5,11 +5,11 @@ import {
   buildArgs,
   runJscpd,
   parseReport,
-  REPORT_DIR,
-  DRYWALL_KEYS,
   DEFAULT_MAX_DUPLICATES,
   DEFAULT_MAX_FRAGMENT_LENGTH,
 } from "../src/lib.js";
+
+const TEST_REPORT_DIR = "/tmp/test-report";
 
 describe("camelToKebab", () => {
   it("converts single boundary", () => {
@@ -31,24 +31,28 @@ describe("camelToKebab", () => {
 
 describe("buildArgs", () => {
   it("adds --gitignore by default", () => {
-    const args = buildArgs({}, {});
+    const args = buildArgs({}, {}, TEST_REPORT_DIR);
     assert.ok(args.includes("--gitignore"));
   });
 
   it("omits --gitignore when respectGitignore is false", () => {
-    const args = buildArgs({ respectGitignore: false }, {});
+    const args = buildArgs({ respectGitignore: false }, {}, TEST_REPORT_DIR);
     assert.ok(!args.includes("--gitignore"));
   });
 
   it("converts camelCase config keys to kebab-case flags", () => {
-    const args = buildArgs({ minTokens: 30 }, {});
+    const args = buildArgs({ minTokens: 30 }, {}, TEST_REPORT_DIR);
     const idx = args.indexOf("--min-tokens");
     assert.ok(idx !== -1);
     assert.equal(args[idx + 1], "30");
   });
 
   it("tool args override config values", () => {
-    const args = buildArgs({ minTokens: 30 }, { minTokens: 50 });
+    const args = buildArgs(
+      { minTokens: 30 },
+      { minTokens: 50 },
+      TEST_REPORT_DIR,
+    );
     const idx = args.indexOf("--min-tokens");
     assert.equal(args[idx + 1], "50");
     // should only appear once
@@ -56,7 +60,11 @@ describe("buildArgs", () => {
   });
 
   it("handles array values as repeated flags", () => {
-    const args = buildArgs({}, { ignore: ["**/test/**", "**/vendor/**"] });
+    const args = buildArgs(
+      {},
+      { ignore: ["**/test/**", "**/vendor/**"] },
+      TEST_REPORT_DIR,
+    );
     const indices = args.reduce(
       (acc, v, i) => (v === "--ignore" ? [...acc, i] : acc),
       [],
@@ -67,12 +75,12 @@ describe("buildArgs", () => {
   });
 
   it("handles boolean true as flag without value", () => {
-    const args = buildArgs({}, { silent: true });
+    const args = buildArgs({}, { silent: true }, TEST_REPORT_DIR);
     assert.ok(args.includes("--silent"));
   });
 
   it("skips boolean false", () => {
-    const args = buildArgs({}, { silent: false });
+    const args = buildArgs({}, { silent: false }, TEST_REPORT_DIR);
     assert.ok(!args.includes("--silent"));
   });
 
@@ -80,6 +88,7 @@ describe("buildArgs", () => {
     const args = buildArgs(
       { jscpdVersion: "5.0.0", respectGitignore: true, path: "src/" },
       {},
+      TEST_REPORT_DIR,
     );
     assert.ok(!args.includes("--jscpd-version"));
     assert.ok(!args.includes("--respect-gitignore"));
@@ -87,13 +96,13 @@ describe("buildArgs", () => {
   });
 
   it("always appends --reporters json and --output", () => {
-    const args = buildArgs({}, {});
+    const args = buildArgs({}, {}, TEST_REPORT_DIR);
     const reportersIdx = args.indexOf("--reporters");
     assert.ok(reportersIdx !== -1);
     assert.equal(args[reportersIdx + 1], "json");
     const outputIdx = args.indexOf("--output");
     assert.ok(outputIdx !== -1);
-    assert.equal(args[outputIdx + 1], REPORT_DIR);
+    assert.equal(args[outputIdx + 1], TEST_REPORT_DIR);
   });
 });
 
