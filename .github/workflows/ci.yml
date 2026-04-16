@@ -24,7 +24,8 @@ jobs:
         run: |
           PKG=$(node -p "require('./package.json').version")
           PLUGIN=$(node -p "require('./.claude-plugin/plugin.json').version")
-          if [ "$PKG" != "$PLUGIN" ]; then
-            echo "::error::Version mismatch: package.json=$PKG, plugin.json=$PLUGIN"
+          LOCK=$(node -p "require('./package-lock.json').version")
+          if [ "$PKG" != "$PLUGIN" ] || [ "$PKG" != "$LOCK" ]; then
+            echo "::error::Version mismatch: package.json=$PKG, plugin.json=$PLUGIN, package-lock.json=$LOCK"
             exit 1
           fi
