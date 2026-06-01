@@ -59,19 +59,55 @@ describe("buildArgs", () => {
     assert.equal(args.lastIndexOf("--min-tokens"), idx);
   });
 
-  it("handles array values as repeated flags", () => {
+  it("joins --ignore array into one comma-separated value", () => {
     const args = buildArgs(
       {},
       { ignore: ["**/test/**", "**/vendor/**"] },
       TEST_REPORT_DIR,
     );
-    const indices = args.reduce(
-      (acc, v, i) => (v === "--ignore" ? [...acc, i] : acc),
-      [],
+    const idx = args.indexOf("--ignore");
+    assert.notEqual(idx, -1);
+    assert.equal(args[idx + 1], "**/test/**,**/vendor/**");
+    // must appear exactly once — a repeated flag would be last-wins in jscpd
+    assert.equal(args.lastIndexOf("--ignore"), idx);
+  });
+
+  it("comma-joins list flags (ignore, ignorePattern, format)", () => {
+    for (const [key, flag] of [
+      ["ignore", "--ignore"],
+      ["ignorePattern", "--ignore-pattern"],
+      ["format", "--format"],
+    ]) {
+      const args = buildArgs({}, { [key]: ["a", "b"] }, TEST_REPORT_DIR);
+      const idx = args.indexOf(flag);
+      assert.notEqual(idx, -1, `${flag} missing`);
+      assert.equal(args[idx + 1], "a,b", `${flag} not comma-joined`);
+      assert.equal(args.lastIndexOf(flag), idx, `${flag} duplicated`);
+    }
+  });
+
+  it("accepts a single-element list flag", () => {
+    const args = buildArgs({}, { ignore: ["**/test/**"] }, TEST_REPORT_DIR);
+    const idx = args.indexOf("--ignore");
+    assert.equal(args[idx + 1], "**/test/**");
+  });
+
+  it("throws when a non-list option is given an array", () => {
+    assert.throws(
+      () => buildArgs({}, { pattern: ["**/*.js", "**/*.ts"] }, TEST_REPORT_DIR),
+      /does not accept multiple values/,
     );
-    assert.equal(indices.length, 2);
-    assert.equal(args[indices[0] + 1], "**/test/**");
-    assert.equal(args[indices[1] + 1], "**/vendor/**");
+  });
+
+  it("passes formatsExts through as a single string value", () => {
+    const args = buildArgs(
+      {},
+      { formatsExts: "javascript:es,es6;dart:dt" },
+      TEST_REPORT_DIR,
+    );
+    const idx = args.indexOf("--formats-exts");
+    assert.notEqual(idx, -1);
+    assert.equal(args[idx + 1], "javascript:es,es6;dart:dt");
   });
 
   it("handles boolean true as flag without value", () => {
@@ -103,6 +139,17 @@ describe("buildArgs", () => {
     const outputIdx = args.indexOf("--output");
     assert.ok(outputIdx !== -1);
     assert.equal(args[outputIdx + 1], TEST_REPORT_DIR);
+  });
+
+  it("rejects a user-supplied reporters value", () => {
+    assert.throws(
+      () => buildArgs({}, { reporters: ["console"] }, TEST_REPORT_DIR),
+      /not configurable/,
+    );
+    assert.throws(
+      () => buildArgs({ reporters: "console" }, {}, TEST_REPORT_DIR),
+      /not configurable/,
+    );
   });
 });
 
