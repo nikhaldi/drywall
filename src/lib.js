@@ -22,6 +22,15 @@ export function camelToKebab(str) {
   return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 }
 
+// jscpd options that accept a comma-separated list in a single value. None of
+// jscpd's options are variadic (all declared `[string]`, never `[string...]`),
+// so a repeated flag is silently last-wins — these must be comma-joined into one
+// value instead. (formatsExts/formatsNames also take lists but use a `;`/`,`
+// nested syntax and are passed through as pre-formatted strings, not arrays.)
+// reporters is intentionally absent: DRYwall always uses the json reporter (the
+// server reads jscpd-report.json), so it is not user-configurable.
+export const LIST_FLAGS = new Set(["ignore", "ignorePattern", "format"]);
+
 export async function readConfig() {
   try {
     const raw = await readFile(".drywallrc.json", "utf8");
@@ -43,12 +52,28 @@ export function buildArgs(config, toolArgs, reportDir) {
 
   for (const [key, value] of Object.entries(merged)) {
     if (DRYWALL_KEYS.has(key)) continue;
+    // DRYwall always uses the json reporter so the server can read the report;
+    // a custom reporters value has no effect, so reject it rather than silently
+    // drop or merge it.
+    if (key === "reporters") {
+      throw new Error(
+        `"reporters" is not configurable in DRYwall; it always uses the ` +
+          `json reporter that the server reads. Remove it from your config.`,
+      );
+    }
     const flag = `--${camelToKebab(key)}`;
 
     if (Array.isArray(value)) {
-      for (const item of value) {
-        args.push(flag, String(item));
+      if (!LIST_FLAGS.has(key)) {
+        throw new Error(
+          `Config key "${key}" does not accept multiple values; ` +
+            `jscpd's --${camelToKebab(key)} takes a single value. ` +
+            `Provide a string, not an array.`,
+        );
       }
+      // jscpd splits these on "," internally; a repeated flag would be
+      // last-wins, so join into one comma-separated value.
+      args.push(flag, value.map(String).join(","));
     } else if (typeof value === "boolean") {
       if (value) args.push(flag);
     } else if (value != null) {
