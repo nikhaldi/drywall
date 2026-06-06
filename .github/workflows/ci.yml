@@ -21,6 +21,23 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # The integration test runs `npx jscpd@<version>` for real, which downloads
+      # and installs jscpd (~22 MB) into the npx cache on a cold runner. Cache that
+      # tree, keyed on the jscpd version, so subsequent runs reuse it instead of
+      # re-downloading. (setup-node's npm cache is keyed on package-lock.json, which
+      # never changes for jscpd, so it can't keep this warm.)
+      - name: Resolve jscpd version and npx cache path
+        id: jscpd
+        shell: bash
+        run: |
+          version=$(node -e "const fs=require('fs');const m=fs.readFileSync('src/lib.js','utf8').match(/DEFAULT_VERSION\s*=\s*\"([^\"]+)\"/);process.stdout.write(m[1])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "npx-cache=$(npm config get cache | tr -d '\r')/_npx" >> "$GITHUB_OUTPUT"
+      - name: Cache npx-installed jscpd
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.jscpd.outputs.npx-cache }}
+          key: npx-jscpd-${{ runner.os }}-node${{ matrix.node-version }}-${{ steps.jscpd.outputs.version }}
       - name: Integration test (real npx jscpd execution)
         run: npm run test:integration
 
