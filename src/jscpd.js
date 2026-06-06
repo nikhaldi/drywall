@@ -19,6 +19,7 @@ import {
   readConfig,
   runJscpd,
   parseReport,
+  normalizeScanPath,
 } from "./lib.js";
 
 const server = new McpServer({ name: "drywall", version: VERSION });
@@ -72,8 +73,9 @@ server.registerTool(
 
       const args = buildArgs(config, options, reportDir);
 
-      // The path argument goes last (positional, not a flag)
-      const targetPath = scanPath || config.path || ".";
+      // The path argument goes last (positional, not a flag). Normalize Windows
+      // backslashes to forward slashes so jscpd's fast-glob can match the path.
+      const targetPath = normalizeScanPath(scanPath || config.path || ".");
       args.push(targetPath);
 
       const { cmd } = await runJscpd(version, args);

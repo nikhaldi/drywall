@@ -1,7 +1,8 @@
 import { execFile } from "node:child_process";
 import { readFile, mkdtemp } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
+import { existsSync } from "node:fs";
 
 export const VERSION = DRYWALL_VERSION;
 export const DEFAULT_VERSION = "4.0.9";
@@ -85,7 +86,47 @@ export function buildArgs(config, toolArgs, reportDir) {
   return args;
 }
 
+// jscpd globs the scan path with fast-glob, which treats backslashes as escape
+// characters on every platform. On Windows the separator is `\`, so an absolute
+// target like `E:\proj\src` becomes a broken pattern that matches nothing (an
+// empty report). Normalize to forward slashes — safe because `\` is never a
+// legal filename character on Windows. Other platforms are left untouched.
+export function normalizeScanPath(scanPath) {
+  if (process.platform === "win32" && typeof scanPath === "string") {
+    return scanPath.replace(/\\/g, "/");
+  }
+  return scanPath;
+}
+
 const VERSION_RE = /^\d+\.\d+\.\d+(-[\w.]+)?$/;
+
+// Resolve how to invoke npx across platforms.
+// On Windows `npx` is a `.cmd` shim: execFile("npx", …) fails with ENOENT (only
+// npx.cmd is on PATH), and execFile("npx.cmd", …) throws EINVAL on patched Node
+// (CVE-2024-27980) unless a shell is used. Running npm's npx-cli.js with the
+// current `node` binary skips the shell entirely, so argv is passed verbatim —
+// no quoting or injection pitfalls. Falls back to the .cmd shim via a shell if
+// the CLI script can't be located. Non-Windows keeps the plain `npx` call.
+function resolveNpx(fullArgs) {
+  if (process.platform !== "win32") {
+    return { command: "npx", spawnArgs: fullArgs, options: {} };
+  }
+  const npxCli = join(
+    dirname(process.execPath),
+    "node_modules",
+    "npm",
+    "bin",
+    "npx-cli.js",
+  );
+  if (existsSync(npxCli)) {
+    return {
+      command: process.execPath,
+      spawnArgs: [npxCli, ...fullArgs],
+      options: {},
+    };
+  }
+  return { command: "npx.cmd", spawnArgs: fullArgs, options: { shell: true } };
+}
 
 export function runJscpd(version, args) {
   if (!VERSION_RE.test(version)) {
@@ -93,8 +134,9 @@ export function runJscpd(version, args) {
   }
   const fullArgs = [`jscpd@${version}`, ...args];
   const cmd = ["npx", ...fullArgs];
+  const { command, spawnArgs, options } = resolveNpx(fullArgs);
   return new Promise((resolve, reject) => {
-    execFile("npx", fullArgs, (error, stdout, stderr) => {
+    execFile(command, spawnArgs, options, (error, stdout, stderr) => {
       if (error && !stderr.includes("Clone found")) {
         reject(new Error(stderr || error.message));
       } else {
