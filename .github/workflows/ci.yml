@@ -21,6 +21,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Integration test (real npx jscpd execution)
+        run: npm run test:integration
 
   checks:
     runs-on: ubuntu-latest

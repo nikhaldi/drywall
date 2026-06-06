@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node build.js",
     "test": "node --import ./test/setup.js --test \"test/**/*.test.js\"",
+    "test:integration": "node --import ./test/setup.js --test \"test/**/*.integration.js\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
