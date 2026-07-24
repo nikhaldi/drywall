@@ -13,6 +13,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         node-version: [22, 24]
+    env:
+      # Reference 4.x (Node core) version the second integration run tests
+      # against; the first run uses DEFAULT_VERSION from src/lib.js (the 5.x
+      # Rust core). Bump manually.
+      JSCPD_V4_VERSION: "4.2.5"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,10 +27,11 @@ jobs:
       - run: npm ci
       - run: npm test
       # The integration test runs `npx jscpd@<version>` for real, which downloads
-      # and installs jscpd (~22 MB) into the npx cache on a cold runner. Cache that
-      # tree, keyed on the jscpd version, so subsequent runs reuse it instead of
-      # re-downloading. (setup-node's npm cache is keyed on package-lock.json, which
-      # never changes for jscpd, so it can't keep this warm.)
+      # and installs jscpd into the npx cache on a cold runner. Cache that tree,
+      # keyed on both jscpd versions under test, so subsequent runs reuse it
+      # instead of re-downloading. (setup-node's npm cache is keyed on
+      # package-lock.json, which never changes for jscpd, so it can't keep this
+      # warm.)
       - name: Resolve jscpd version and npx cache path
         id: jscpd
         shell: bash
@@ -37,9 +43,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.jscpd.outputs.npx-cache }}
-          key: npx-jscpd-${{ runner.os }}-node${{ matrix.node-version }}-${{ steps.jscpd.outputs.version }}
-      - name: Integration test (real npx jscpd execution)
+          key: npx-jscpd-${{ runner.os }}-node${{ matrix.node-version }}-${{ steps.jscpd.outputs.version }}-${{ env.JSCPD_V4_VERSION }}
+      - name: Integration test (jscpd 5.x, code default)
         run: npm run test:integration
+      - name: Integration test (jscpd 4.x)
+        run: npm run test:integration
+        env:
+          JSCPD_VERSION: ${{ env.JSCPD_V4_VERSION }}
 
   checks:
     runs-on: ubuntu-latest
