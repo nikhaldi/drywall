@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { existsSync } from "node:fs";
 
 export const VERSION = DRYWALL_VERSION;
-export const DEFAULT_VERSION = "4.0.9";
+export const DEFAULT_VERSION = "4.2.5";
 
 export async function createReportDir() {
   const dir = await mkdtemp(join(tmpdir(), "drywall-report-"));
