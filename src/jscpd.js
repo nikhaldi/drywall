@@ -16,6 +16,7 @@ import {
   DEFAULT_MAX_FRAGMENT_LENGTH,
   createReportDir,
   buildArgs,
+  jscpdMajor,
   readConfig,
   runJscpd,
   parseReport,
@@ -78,11 +79,13 @@ server.registerTool(
       const targetPath = normalizeScanPath(scanPath || config.path || ".");
       args.push(targetPath);
 
-      const { cmd } = await runJscpd(version, args);
+      const { cmd } = await runJscpd(version, args, reportPath);
       const raw = await readFile(reportPath, "utf8");
       const result = await parseReport(raw, {
         maxDuplicates: maxDuplicates ?? config.maxDuplicates,
         maxFragmentLength: maxFragmentLength ?? config.maxFragmentLength,
+        scanPath: targetPath,
+        jscpdMajor: jscpdMajor(version),
       });
 
       return {

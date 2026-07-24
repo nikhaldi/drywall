@@ -33,7 +33,7 @@ Deduplicate code in this codebase
 
 ## Configuration
 
-Create a `.drywallrc.json` in your project root to set defaults. Values correspond to [jscpd CLI options](https://jscpd.dev/getting-started/configuration#cli-options), except for the DRYwall-specific ones listed below:
+Create a `.drywallrc.json` in your project root to set defaults. Values correspond to [jscpd CLI options](https://jscpd.dev/getting-started/configuration#cli-options), except for the DRYwall-specific ones listed below. Example config:
 
 ```json
 {
@@ -41,14 +41,14 @@ Create a `.drywallrc.json` in your project root to set defaults. Values correspo
   "minLines": 5,
   "ignore": ["**/node_modules/**", "**/dist/**", "**/*.generated.*"],
   "respectGitignore": true,
-  "jscpdVersion": "4.2.5"
+  "jscpdVersion": "5.0.12"
 }
 ```
 
 The configuration options specific to DRYwall are:
 
-- **`respectGitignore`** — `true` by default. Passes `--gitignore` to jscpd so that files excluded by `.gitignore` are automatically skipped. Set to `false` to disable.
-- **`jscpdVersion`** — Pin the jscpd version used via `npx`. Defaults to `4.2.5` if not set.
+- **`respectGitignore`** — `true` by default. Files excluded by `.gitignore` are automatically skipped. Set to `false` to disable.
+- **`jscpdVersion`** — Pin the jscpd version used via `npx`. Defaults to `5.0.12` if not set. The older 4.x Node-core line is also supported by pinning e.g. `"4.2.5"`; note that some jscpd CLI options [changed between 4.x and 5.x](https://jscpd.dev/getting-started/migration), so options in your config must match the pinned major version.
 - **`maxDuplicates`** — Maximum number of duplicate pairs to return, ranked by impact. Defaults to `20`. (This needs to be restricted to avoid blowing past context limits right away in large codebases.)
 - **`maxFragmentLength`** — Maximum character length of each code fragment before truncation. Defaults to `500`.
 
